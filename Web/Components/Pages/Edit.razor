@@ -6,7 +6,7 @@
 
 <h3>Редактировать данные жителя:</h3>
 
-@if (editCitizen == null)
+@if (editCitizen is null)
 {
     <p><em>Загрузка данных...</em></p>
 }
@@ -31,7 +31,7 @@ else
             Дата рождения: <br />
             <InputDate id="birth_date" @bind-Value="editCitizen.BirthDate" />
         </p>
-        <button type="submit" class="btn btn-primary">Обновить</button> 
+        <button type="submit" class="btn btn-primary">Обновить</button>
     </EditForm>
 }
 <NavLink class="btn btn-secondary" href="/">Вернуться назад</NavLink>
@@ -45,8 +45,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (Http.BaseAddress is null) Http.BaseAddress = new Uri("https://localhost:7286/");
-        if (editCitizen == null)
+        if (editCitizen is null)
         {
             editCitizen = new();
             editCitizen.Map(await Http.GetFromJsonAsync<CitizenDTO>($"api/citizens/{Id}"));
@@ -58,4 +57,3 @@ else
         navigation.NavigateTo("/");
     }
 }
-   

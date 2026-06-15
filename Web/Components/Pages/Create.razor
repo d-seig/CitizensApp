@@ -5,7 +5,7 @@
 
 <h3>Анкета жителя</h3>
 
-@if (newCitizen == null)
+@if (newCitizen is null)
 {
     <p><em>Загрузка данных...</em></p>
 }
@@ -38,11 +38,7 @@ else
 @code {
     [SupplyParameterFromForm(FormName = "create_form")]
     private Citizen newCitizen { get; set; }
-    protected override async Task OnInitializedAsync()
-    {
-        if (Http.BaseAddress is null) Http.BaseAddress = new Uri("https://localhost:7286/");
-        newCitizen ??= new();
-    }
+    protected override async Task OnInitializedAsync() => newCitizen ??= new();
     private async Task AddCitizen()
     {
         await Http.PostAsJsonAsync("api/citizens", newCitizen);
