@@ -1,0 +1,61 @@
+﻿@page "/edit/{id:int}"
+@inject NavigationManager navigation
+@inject HttpClient Http
+@using Web.Models;
+@using DTO;
+
+<h3>Редактировать данные жителя:</h3>
+
+@if (editCitizen == null)
+{
+    <p><em>Загрузка данных...</em></p>
+}
+else
+{
+    <EditForm Model="@editCitizen" FormName="edit_form" OnValidSubmit="EditCitizen">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <p>
+            Фамилия: <br />
+            <InputText id="famil" @bind-Value="editCitizen.Famil" />
+        </p>
+        <p>
+            Имя: <br />
+            <InputText id="imja" @bind-Value="editCitizen.Imja" />
+        </p>
+        <p>
+            Отчество: <br />
+            <InputText id="otch" @bind-Value="editCitizen.Otch" />
+        </p>
+        <p>
+            Дата рождения: <br />
+            <InputDate id="birth_date" @bind-Value="editCitizen.BirthDate" />
+        </p>
+        <button type="submit" class="btn btn-primary">Обновить</button> 
+    </EditForm>
+}
+<NavLink class="btn btn-secondary" href="/">Вернуться назад</NavLink>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm(FormName = "edit_form")]
+    private Citizen editCitizen { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Http.BaseAddress is null) Http.BaseAddress = new Uri("https://localhost:7286/");
+        if (editCitizen == null)
+        {
+            editCitizen = new();
+            editCitizen.Map(await Http.GetFromJsonAsync<CitizenDTO>($"api/citizens/{Id}"));
+        }
+    }
+    private async Task EditCitizen()
+    {
+        await Http.PutAsJsonAsync("api/citizens/", editCitizen.Unmap(Id));
+        navigation.NavigateTo("/");
+    }
+}
+   

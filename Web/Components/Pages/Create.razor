@@ -1,0 +1,51 @@
+﻿@page "/create"
+@inject NavigationManager navigation
+@inject HttpClient Http
+@using Web.Models;
+
+<h3>Анкета жителя</h3>
+
+@if (newCitizen == null)
+{
+    <p><em>Загрузка данных...</em></p>
+}
+else
+{
+    <EditForm Model="@newCitizen" FormName="create_form" OnValidSubmit="AddCitizen">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <p>
+            Фамилия: <br />
+            <InputText id="famil" @bind-Value="newCitizen.Famil" />
+        </p>
+        <p>
+            Имя: <br />
+            <InputText id="imja" @bind-Value="newCitizen.Imja" />
+        </p>
+        <p>
+            Отчество: <br />
+            <InputText id="otch" @bind-Value="newCitizen.Otch" />
+        </p>
+        <p>
+            Дата рождения: <br />
+            <InputDate id="birth_date" @bind-Value="newCitizen.BirthDate" />
+        </p>
+        <button type="submit" class="btn btn-primary">Добавить</button> <br />
+    </EditForm>
+}
+<NavLink class="btn btn-secondary" href="/">Вернуться назад</NavLink>
+
+@code {
+    [SupplyParameterFromForm(FormName = "create_form")]
+    private Citizen newCitizen { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        if (Http.BaseAddress is null) Http.BaseAddress = new Uri("https://localhost:7286/");
+        newCitizen ??= new();
+    }
+    private async Task AddCitizen()
+    {
+        await Http.PostAsJsonAsync("api/citizens", newCitizen);
+        navigation.NavigateTo("/");
+    }
+}
