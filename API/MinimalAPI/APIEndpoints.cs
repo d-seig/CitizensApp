@@ -81,7 +81,7 @@ namespace API.MinimalAPI
         private static async Task<IResult> Create(IDbConnection connection, CitizenDTO citizen)
         {
             if (string.IsNullOrWhiteSpace(citizen?.Famil))
-                return Results.BadRequest("Данные сотрудника неверны.");
+                return Results.BadRequest("Данные гражданина неверны.");
             using (connection)
             {
                 connection.Open();
